@@ -1,0 +1,10 @@
+Package: com.binksalex.littlexs
+Name: LittleXS
+Depends: mobilesubstrate, firmware (>= 11.0)
+Provides: com.rpetrich.rocketbootstrap,  ws.hbang.common (= 1.12)
+Version: 3.0-Custom
+Architecture: iphoneos-arm
+Description: LittleXS + Dragger + HideLabels12 + Medousa + Saw + Other things
+Maintainer: Ryan Nair
+Author: Ryan Nair
+Section: Tweaks
