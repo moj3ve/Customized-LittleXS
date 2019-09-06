@@ -8,7 +8,7 @@
 
 // Removes the bottom inset
 %hook UIWindow
--(UIEdgeInsets )safeAreaInsets {
+-(UIEdgeInsets)safeAreaInsets {
     UIEdgeInsets oldInsets = %orig;
     UIEdgeInsets newInsets = UIEdgeInsetsMake(oldInsets.top,oldInsets.left,0.0,oldInsets.right);
     return newInsets;
@@ -93,12 +93,7 @@
 %end
 
 // Moves Lockscreen shortcuts to where they should be
-@interface UIView (SpringBoardAdditions)
-- (void)sb_removeAllSubviews;
-@end
-
 @interface SBDashBoardQuickActionsView : UIView
-- (void)_layoutQuickActionButtons;
 @end
 
 %hook SBDashBoardQuickActionsView
