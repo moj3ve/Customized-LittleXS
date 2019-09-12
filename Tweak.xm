@@ -84,12 +84,6 @@
 + (BOOL)deviceSupportsButtons {
 	return YES;
 }
-- (BOOL)hasCamera {
-	return YES;
-}
-- (BOOL)hasFlashlight {
-	return YES;
-}
 %end
 
 // Moves Lockscreen shortcuts to where they should be
@@ -253,7 +247,6 @@ static CFPropertyListRef (*orig_MGCopyAnswer_internal)(CFStringRef property, uin
 CFPropertyListRef new_MGCopyAnswer_internal(CFStringRef property, uint32_t *outTypeCode) {
     CFPropertyListRef r = orig_MGCopyAnswer_internal(property, outTypeCode);
 	#define k(string) CFEqual(property, CFSTR(string))
-     NSString* bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 if (k("oPeik/9e8lQWMszEjbPzng") || k("ArtworkTraits")) {
         CFMutableDictionaryRef copy = CFDictionaryCreateMutableCopy(NULL, 0, (CFDictionaryRef)r);
         CFRelease(r);
@@ -262,19 +255,22 @@ if (k("oPeik/9e8lQWMszEjbPzng") || k("ArtworkTraits")) {
         num = CFNumberCreate(NULL, kCFNumberIntType, &deviceSubType);
         CFDictionarySetValue(copy, CFSTR("ArtworkDeviceSubType"), num);
         return copy;
-} else if ((k("8olRm6C1xqr7AJGpLRnpSw") || k("PearlIDCapability")) && [bundleIdentifier isEqualToString:@"com.apple.springboard"]) {
-        return (__bridge CFPropertyListRef)@YES;
     } 
 	return r;
 }
 %end
 
 // Enables PiP in iOS' video player.
-%group PIP
+%group MGGetBoolAnswer
 extern "C" Boolean MGGetBoolAnswer(CFStringRef);
 %hookf(Boolean, MGGetBoolAnswer, CFStringRef key) {
 #define keyy(key_) CFEqual(key, CFSTR(key_))
+NSString* bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
     if (keyy("nVh/gwNpy7Jv1NOk00CMrw"))
+        return YES;
+    else if (keyy("z5G/N9jcMdgPm8UegLwbKg") || keyy("IsEmulatedDevice"))
+        return YES;
+    else if ((keyy("8olRm6C1xqr7AJGpLRnpSw") || keyy("PearlIDCapability")) && [bundleIdentifier isEqualToString:@"com.apple.springboard"])
         return YES;
     return %orig;
 }
@@ -282,14 +278,6 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
 
 // Adds the Padlock to the lockscreen.
 %group ProudLock
-extern "C" Boolean MGGetBoolAnswer(CFStringRef);
-%hookf(Boolean, MGGetBoolAnswer, CFStringRef key) {
-#define keyyy(key_) CFEqual(key, CFSTR(key_))
-    if (keyyy("z5G/N9jcMdgPm8UegLwbKg") || keyyy("IsEmulatedDevice"))
-        return YES;
-    return %orig;
-}
-
 #define CGRectSetY(rect, y) CGRectMake(rect.origin.x, y, rect.size.width, rect.size.height)
 
 %hook SBFLockScreenDateView
@@ -361,7 +349,7 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
                 MSHookFunction(((void *)((const uint8_t *)MGCopyAnswerFn + branch_offset)), (void *)new_MGCopyAnswer_internal, (void **)&orig_MGCopyAnswer_internal);
             
          %init(InsetX);
-         %init(PIP);
+         %init(MGGetBoolAnswer);
          %init(ProudLock);
 
         %init(_ungrouped);
