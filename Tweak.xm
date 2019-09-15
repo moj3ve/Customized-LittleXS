@@ -238,8 +238,8 @@ static addr_t find_branch64(const uint8_t *buf, addr_t start, size_t length) {
 static addr_t follow_branch64(const uint8_t *buf, addr_t branch) {
 	long long w;
 	w = *(uint32_t *)(buf + branch) & 0x3FFFFFF;
-	w <<= 64 - 26;
-	w >>= 64 - 26 - 2;
+	w <<= 38;
+	w >>= 36;
 	return branch + w;
 }
 
@@ -281,14 +281,8 @@ NSString* bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 #define CGRectSetY(rect, y) CGRectMake(rect.origin.x, y, rect.size.width, rect.size.height)
 
 %hook SBFLockScreenDateView
-- (void)layoutSubviews {
-        %orig;
-        UIView* timeView = MSHookIvar<UIView*>(self, "_timeLabel");
-        UIView* dateSubtitleView = MSHookIvar<UIView*>(self, "_dateSubtitleView");
-        UIView* customSubtitleView = MSHookIvar<UIView*>(self, "_customSubtitleView");
-        [timeView setFrame:CGRectSetY(timeView.frame, timeView.frame.origin.y + 28)];
-        [dateSubtitleView setFrame:CGRectSetY(dateSubtitleView.frame, dateSubtitleView.frame.origin.y + 28)];
-        [customSubtitleView setFrame:CGRectSetY(customSubtitleView.frame, customSubtitleView.frame.origin.y + 28)];
+- (void)setFrame:(CGRect)frame {
+    %orig(CGRectSetY(frame, frame.origin.y + 28));
 }
 %end
 
