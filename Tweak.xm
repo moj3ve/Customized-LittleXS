@@ -5,7 +5,6 @@
     %orig;
 }
 %end
-
 // Removes the bottom inset
 %hook UIWindow
 -(UIEdgeInsets)safeAreaInsets {
@@ -247,7 +246,7 @@ static CFPropertyListRef (*orig_MGCopyAnswer_internal)(CFStringRef property, uin
 CFPropertyListRef new_MGCopyAnswer_internal(CFStringRef property, uint32_t *outTypeCode) {
     CFPropertyListRef r = orig_MGCopyAnswer_internal(property, outTypeCode);
 	#define k(string) CFEqual(property, CFSTR(string))
-if (k("oPeik/9e8lQWMszEjbPzng") || k("ArtworkTraits")) {
+    if (k("oPeik/9e8lQWMszEjbPzng")) {
         CFMutableDictionaryRef copy = CFDictionaryCreateMutableCopy(NULL, 0, (CFDictionaryRef)r);
         CFRelease(r);
         CFNumberRef num;
@@ -266,11 +265,9 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
 %hookf(Boolean, MGGetBoolAnswer, CFStringRef key) {
 #define keyy(key_) CFEqual(key, CFSTR(key_))
 NSString* bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-    if (keyy("nVh/gwNpy7Jv1NOk00CMrw"))
+    if (keyy("z5G/N9jcMdgPm8UegLwbKg") || keyy("nVh/gwNpy7Jv1NOk00CMrw"))
         return YES;
-    else if (keyy("z5G/N9jcMdgPm8UegLwbKg") || keyy("IsEmulatedDevice"))
-        return YES;
-    else if ((keyy("8olRm6C1xqr7AJGpLRnpSw") || keyy("PearlIDCapability")) && [bundleIdentifier isEqualToString:@"com.apple.springboard"])
+    else if (keyy("8olRm6C1xqr7AJGpLRnpSw") && [bundleIdentifier isEqualToString:@"com.apple.springboard"])
         return YES;
     return %orig;
 }
